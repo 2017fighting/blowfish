@@ -1,0 +1,40 @@
+<div id="giscus"></div>
+<script>
+window.initThemeEventSet.add(()=>{
+
+{{ with .Site.Params.comment.giscus }}
+        const giscusScript = document.createElement('script');
+        giscusScript.src = 'https://giscus.app/client.js';
+        giscusScript.setAttribute('data-repo', {{ .repo }});
+        giscusScript.setAttribute('data-repo-id', {{ .repoId }});
+        giscusScript.setAttribute('data-category', {{ .category }});
+        giscusScript.setAttribute('data-category-id', {{ .categoryId }});
+        giscusScript.setAttribute('data-lang', {{ .lang }});
+        giscusScript.setAttribute('data-mapping', {{ .mapping }});
+        giscusScript.setAttribute('data-reactions-enabled', {{ .reactionsEnabled }});
+        giscusScript.setAttribute('data-emit-metadata', {{ .emitMetadata }});
+        giscusScript.setAttribute('data-input-position', {{ .inputPosition }});
+        {{ if .lazyLoading }}
+        giscusScript.setAttribute('data-loading', 'lazy');
+        {{ end }}
+        giscusScript.setAttribute('data-theme', window.targetAppearance === "dark" ? {{ .darkTheme }} : {{ .lightTheme }});
+        giscusScript.crossOrigin = 'anonymous';
+        giscusScript.async = true;
+        document.getElementById('giscus').appendChild(giscusScript);
+        const _giscusOnSwitchTheme = (() => {
+            console.log(`ta=>${window.targetAppearance}`)
+            const message = {
+                setConfig: {
+                    theme: window.targetAppearance === "dark" ? "cobalt": "catppuccin_latte",
+                    //reactionsEnabled: false,
+                }
+            };
+            const iframe = document.querySelector('iframe.giscus-frame');
+            if (!iframe) return;
+            iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        });
+        window.switchThemeEventSet.add(_giscusOnSwitchTheme);
+{{ end }}
+
+});
+</script>

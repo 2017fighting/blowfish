@@ -1,6 +1,21 @@
 const sitePreference = document.documentElement.getAttribute("data-default-appearance");
 const userPreference = localStorage.getItem("appearance");
 
+window.switchThemeEventSet = new Set();
+window.initThemeEventSet = new Set();
+window.targetAppearance = undefined;
+
+function triggerAppearanceChanged() {
+  for (let event of window.switchThemeEventSet) {
+    event();
+  }
+}
+function triggerAppearanceInited() {
+  for (let event of window.initThemeEventSet) {
+    event();
+  }
+}
+
 if ((sitePreference === "dark" && userPreference === null) || userPreference === "dark") {
   document.documentElement.classList.add("dark");
 }
@@ -16,18 +31,26 @@ if (document.documentElement.getAttribute("data-auto-appearance") === "true") {
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (event) => {
     if (event.matches) {
       document.documentElement.classList.add("dark");
+      window.targetAppearance = "dark";
     } else {
       document.documentElement.classList.remove("dark");
+      window.targetAppearance = "light";
     }
+    triggerAppearanceChanged();
   });
 }
+
 
 window.addEventListener("DOMContentLoaded", (event) => {
   const switcher = document.getElementById("appearance-switcher");
   const switcherMobile = document.getElementById("appearance-switcher-mobile");
 
+  const ta = getTargetAppearance()
+  window.targetAppearance = ta;
   updateMeta();
-  this.updateLogo?.(getTargetAppearance());
+  this.updateLogo?.(ta);
+  triggerAppearanceChanged();
+  triggerAppearanceInited();
 
   if (switcher) {
     switcher.addEventListener("click", () => {
@@ -37,8 +60,10 @@ window.addEventListener("DOMContentLoaded", (event) => {
         "appearance",
         targetAppearance
       );
+      window.targetAppearance = targetAppearance;
       updateMeta();
       this.updateLogo?.(targetAppearance);
+      triggerAppearanceChanged();
     });
     switcher.addEventListener("contextmenu", (event) => {
       event.preventDefault();
@@ -53,8 +78,10 @@ window.addEventListener("DOMContentLoaded", (event) => {
         "appearance",
         targetAppearance
       );
+      window.targetAppearance = targetAppearance;
       updateMeta();
       this.updateLogo?.(targetAppearance);
+      triggerAppearanceChanged();
     });
     switcherMobile.addEventListener("contextmenu", (event) => {
       event.preventDefault();

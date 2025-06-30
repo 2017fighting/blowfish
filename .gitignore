@@ -32,3 +32,8 @@ node_modules
 .idea
 .Ulysses-Group.plist
 .Ulysses-Settings.plist
+
+#rclone
+rclone-current-linux-amd64.zip
+rclone-*-linux-amd64/
+rclone.conf

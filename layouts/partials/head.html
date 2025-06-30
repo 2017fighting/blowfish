@@ -151,7 +151,7 @@
 
     const firebaseConfig = {
       apiKey: {{ $.Site.Params.firebase.apiKey }},
-      authDomain: {{ $.Site.Params.firebase.apiKey }},
+      authDomain: {{ $.Site.Params.firebase.authDomain }},
       projectId: {{ $.Site.Params.firebase.projectId }},
       storageBucket: {{ $.Site.Params.firebase.storageBucket }},
       messagingSenderId: {{ $.Site.Params.firebase.messagingSenderId }},
@@ -160,8 +160,8 @@
     };
 
     var app = firebase.initializeApp(firebaseConfig);
-    var db = firebase.firestore();
-    var auth = firebase.auth();
+    var db = app.firestore();
+    var auth = app.auth();
 
   </script>
   {{ end }}
